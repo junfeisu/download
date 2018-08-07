@@ -1,0 +1,17 @@
+# Mac
+.DS_Store
+
+# node_modules
+node_modules/
+
+# npm debug | yarn debug
+npm-debug.*
+yarn-error.*
+
+# editor
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln

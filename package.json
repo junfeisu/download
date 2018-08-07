@@ -1,0 +1,25 @@
+{
+  "name": "download",
+  "version": "1.0.0",
+  "description": "A downloader",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/junfeisu/download.git"
+  },
+  "keywords": [
+    "downloader"
+  ],
+  "author": "junfeisu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/junfeisu/download/issues"
+  },
+  "homepage": "https://github.com/junfeisu/download#readme",
+  "dependencies": {
+    "commander": "^2.17.1"
+  }
+}

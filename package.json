@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "A downloader",
   "main": "index.js",
+  "bin": {
+    "sj": "./bin/sj.js"
+  },
   "scripts": {
     "test": "npm run test"
   },
@@ -20,6 +23,7 @@
   },
   "homepage": "https://github.com/junfeisu/download#readme",
   "dependencies": {
-    "commander": "^2.17.1"
+    "commander": "^2.17.1",
+    "request": "^2.87.0"
   }
 }

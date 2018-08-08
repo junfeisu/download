@@ -11,11 +11,13 @@ program
   .command('download')
   .option('-u, --url <string>', '设置需要下载的文件的地址')
   .option('-d, --dest <string>', '设置下载文件存放的地址')
+  .option('-n, --name <string>', '设置下载文件的文件名')
   .action(() => {
     let downloadCom = searchItem(program.commands, {_name: 'download'})
     parseArg({
       url: downloadCom.url,
-      dest: downloadCom.dest  
+      dest: downloadCom.dest,
+      name: downloadCom.name
     })
   })
 

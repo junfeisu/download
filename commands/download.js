@@ -3,6 +3,7 @@ const fs = require('fs')
 const path = require('path')
 const crypto = require('crypto')
 const md5 = crypto.createHash('md5')
+const progressBar = require('progress')
 
 let source = ''
 let dest = ''
@@ -24,24 +25,46 @@ const parseArgs = (args) => {
   download()
 }
 
+const handleFileName = (fileType) => {
+  let matchReg = new RegExp('http(s)?:.+\.' + fileType, 'i')
+  let extractReg = /http(s)?:.+\/(?=(\w+)\.)/
+
+  if (matchReg.test(source)) {
+    fileName = source.replace(extractReg, (match, $1, $2) => {
+      return ''
+    })
+  } else {
+    md5.update(source)
+    fileName = 'sj-' + md5.digest('hex').slice(0, 7)
+  }
+}
+
 const download = () => {
   request(source, (res) => {
     let contentType = res.headers['content-type']
     let fileType = contentType.replace(/\w+\//, '')
+    let bar = new progressBar('  downloading [:bar] :rate/bps :percent :etas', {
+      total: parseInt(res.headers['content-length'], 10),
+      complete: '=',
+      incomplete: ' ',
+      width: 20,
+    })
+    let downlodaSize = 0
+    
     if (!fileName) {
-      let matchReg = new RegExp('http(s)?:.+\.' + fileType, 'i')
-      let extractReg = /http(s)?:.+\/(?=(\w+)\.)/
-      if (matchReg.test(source)) {
-        fileName = source.replace(extractReg, (match, $1, $2) => {
-          return ''
-        })
-      } else {
-        md5.update(source)
-        fileName = 'sj-' + md5.digest('hex').slice(0, 7)
-      }
+      handleFileName(fileType)
     }
+
     let file = fs.createWriteStream(path.join(dest, fileName + '.' + fileType))
-    res.pipe(file)
+
+    res.on('data', data => {
+      bar.tick(data.length)
+      file.write(data)
+    })
+
+    res.on('end', () => {
+      console.log('  download finish! \n')
+    })
   })
 }
 

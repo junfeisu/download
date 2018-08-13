@@ -1,4 +1,5 @@
-const request = require('https').get
+const https = require('https')
+const http = require('http')
 const fs = require('fs')
 const path = require('path')
 const crypto = require('crypto')
@@ -9,6 +10,7 @@ const inquirer = require('inquirer')
 let source = ''
 let dest = ''
 let fileName = ''
+let request = null
 
 const parseArgs = (args) => {
   let { url, dest, name } = args
@@ -18,6 +20,7 @@ const parseArgs = (args) => {
   }
 
   source = url
+  request = /^https/.test(source) ? https.get : http.get
   dest = path.resolve(process.env.PWD, dest)
   if (name) {
     fileName = name

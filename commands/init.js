@@ -67,7 +67,15 @@ const setOptions = () => {
 }
 
 const downloadTemplates = () => {
-  console.log(process.env.PWD)
+  let source = path.resolve(__dirname, '../templates/' + options.template + '/*')
+  shell.cp('-r', source, './')
+  setPackageJson()
+}
+
+const setPackageJson = () => {
+  let packageJson = require(path.resolve('./package.json'))
+  packageJson.author = options.author
+  packageJson.repository.url = options.git
 }
 
 module.exports = parseArgs

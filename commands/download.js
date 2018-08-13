@@ -4,6 +4,7 @@ const path = require('path')
 const crypto = require('crypto')
 const md5 = crypto.createHash('md5')
 const progressBar = require('progress')
+const inquirer = require('inquirer')
 
 let source = ''
 let dest = ''
@@ -30,8 +31,8 @@ const handleFileName = (fileType) => {
   let extractReg = /http(s)?:.+\/(?=(\w+)\.)/
 
   if (matchReg.test(source)) {
-    fileName = source.replace(extractReg, (match, $1, $2) => {
-      return ''
+    source.replace(extractReg, (match, $1, $2) => {
+      fileName = $2
     })
   } else {
     md5.update(source)
@@ -39,8 +40,31 @@ const handleFileName = (fileType) => {
   }
 }
 
+const replaceFile = async (res) => {
+  res.pause()
+  
+  let questionStr = 'The ' + fileName + ' alerady exists in ' + dest + '. Would you replace it [Y/N]?'
+  let questionResult = await inquirer.prompt([{
+    type: 'exist',
+    name: 'replaceOrigin',
+    message: questionStr
+  }])
+
+  let flag = questionResult.replaceOrigin
+  if (!flag || (flag.toUpperCase() !== 'Y' && flag.toUpperCase() !== 'N')) {
+    replaceFile(res)
+    return
+  }
+
+  if (questionResult.replaceOrigin.toUpperCase() !== 'Y') {
+    process.exit(1)
+  }
+
+  res.resume()
+}
+
 const download = () => {
-  request(source, (res) => {
+  request(source, async (res) => {
     let contentType = res.headers['content-type']
     let fileType = contentType.replace(/\w+\//, '')
     let bar = new progressBar('  downloading [:bar] :rate/bps :percent :etas', {
@@ -49,13 +73,17 @@ const download = () => {
       incomplete: ' ',
       width: 20,
     })
-    let downlodaSize = 0
     
     if (!fileName) {
       handleFileName(fileType)
     }
 
-    let file = fs.createWriteStream(path.join(dest, fileName + '.' + fileType))
+    let filePath = path.join(dest, fileName + '.' + fileType)
+    if (fs.existsSync(filePath)) {
+      replaceFile(res)
+    }
+
+    let file = fs.createWriteStream(filePath)
 
     res.on('data', data => {
       bar.tick(data.length)
@@ -64,6 +92,7 @@ const download = () => {
 
     res.on('end', () => {
       console.log('  download finish! \n')
+      file.end()
     })
   })
 }

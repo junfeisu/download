@@ -12,9 +12,21 @@ const options = {
 
 let projectName = ''
 
-const parseArgs = (args) => {
+const parseArgs = async (args) => {
   const { project } = args
   projectName = project
+  if (fs.existsSync(path.resolve(projectName))) {
+    const existsResult = await inquirer.prompt([{
+      type: 'exists',
+      name: 'replaceOrigin',
+      message: 'The project ' + projectName + ' has exists.Do you want to replace it?[Y/N]'
+    }])
+
+    if (existsResult.replaceOrigin.toUpperCase() !== 'Y') {
+      process.exit(1)
+    }
+    shell.rm('-rf', projectName)
+  }
   fs.mkdirSync(projectName)
 
   getUserOptions()
@@ -55,7 +67,7 @@ const setOptions = () => {
 }
 
 const downloadTemplates = () => {
-  console.log(process.env)
+  console.log(process.env.PWD)
 }
 
 module.exports = parseArgs

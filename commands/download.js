@@ -12,6 +12,7 @@ let dest = ''
 let fileName = ''
 let request = null
 
+// 对命令行参数的处理
 const parseArgs = (args) => {
   let { url, dest, name } = args
   if (!url) {
@@ -29,6 +30,11 @@ const parseArgs = (args) => {
   download()
 }
 
+/*
+ 当没有提供文件的名称时我们会自动添加文件名
+ 1. 如果地址自带文件后缀名，我们从地址里取文件名
+ 2. 如果地址没有带后缀名，那么我们就会生成一个md5然后截取前7位，然后在前面加上sj-
+ */
 const handleFileName = (fileType) => {
   let matchReg = new RegExp('http(s)?:.+\.' + fileType, 'i')
   let extractReg = /http(s)?:.+\/(?=(\w+)\.)/
@@ -43,6 +49,7 @@ const handleFileName = (fileType) => {
   }
 }
 
+// 当需要下载的文件存放的位置同在同名文件，询问是否需要替换
 const replaceFile = async (res) => {
   res.pause()
   

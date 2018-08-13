@@ -1,10 +1,10 @@
-# Mac
+# Mac DS_Store
 .DS_Store
 
 # node_modules
-node_modules/
+node_modules
 
-# npm debug | yarn debug
+# npm debug & yarn error
 npm-debug.*
 yarn-error.*
 

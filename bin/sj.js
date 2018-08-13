@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 const program = require('commander')
-const parseArg = require('../commands/download')
 const searchItem = require('../utils/array').searchItem
 
 program
@@ -14,10 +13,20 @@ program
   .option('-n, --file-name <string>', '设置下载文件的文件名')
   .action(() => {
     let downloadCom = searchItem(program.commands, {_name: 'download'})
+    const parseArg = require('../commands/download')
     parseArg({
       url: downloadCom.url,
       dest: downloadCom.dest ? downloadCom.dest : '',
       name: downloadCom.fileName
+    })
+  })
+
+program
+  .command('init <projectName>')
+  .action((projectName) => {
+    const parseArg = require('../commands/init')
+    parseArg({
+      project: projectName
     })
   })
 

@@ -1,6 +1,5 @@
 const inquirer = require('inquirer')
 const path = require('path')
-const exec = require('child_process').exec
 const shell = require('shelljs')
 const fs = require('fs')
 
@@ -107,6 +106,13 @@ const setPackageJson = () => {
   packageJson.description = options.description
   packageJson.name = options.projectName
   fs.writeFileSync(path.resolve('./package.json'), JSON.stringify(packageJson, null, 2))
+  downloadNodeModules()
+}
+
+const downloadNodeModules = () => {
+  shell.exec('npm i', (code, stdout, stderr) => {
+    console.log('The project is create successfully.')
+  })
 }
 
 module.exports = parseArgs

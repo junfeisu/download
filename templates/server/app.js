@@ -43,10 +43,10 @@ app.use(function(err, req, res, next) {
   })
 })
 
-const server = app.listen(4000, () => {
+const server = app.listen(4000, 'localhost', () => {
   let host = server.address().address
   let port = server.address().port
-  console.log(`Server start at ${host}:${port}`)
+  console.log(`Server start at http://${host}:${port}`)
 })
 
 module.exports = app

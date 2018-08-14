@@ -7,7 +7,9 @@ const fs = require('fs')
 const options = {
   template: '',
   author: '',
-  git: ''
+  git: '',
+  projectName: '',
+  description: ''
 }
 
 let projectName = ''
@@ -36,11 +38,36 @@ const getUserOptions = async () => {
   const questions = [{
     type: 'input',
     name: 'template',
-    messsage: 'What\'s the template you want to use？'
+    messsage: 'What\'s the template you want to use？',
+    validate: (value) => {
+      const templates = ['server']
+      if (templates.indexOf(value) < 0) {
+        console.warn('   \033[;33m [sj-warning]: Please enter a value in [' + templates.join(', ') + ']')
+      } else {
+        return true
+      }
+    }
+  }, {
+    type: 'input',
+    name: 'projectName',
+    message: `What\'s your project name?[${projectName}]?`,
+    default: () => projectName
+  }, {
+    type: 'input',
+    name: 'description',
+    message: 'What\'s your project description?'
   }, {
     type: 'input',
     name: 'git',
-    message: 'What\'s your project git repository address？'
+    message: 'What\'s your project git repository address？',
+    validate: (value) => {
+      let checkGitReg = /(https:\/\/|git@).+\.git$/
+      if (!checkGitReg.test(value)) {
+        console.warn('   \033[;33m [sj-warning]: Please enter a valid git repository address')
+      } else {
+        return true
+      }
+    }
   }, {
     type: 'input',
     name: 'author',
@@ -74,8 +101,12 @@ const downloadTemplates = () => {
 
 const setPackageJson = () => {
   let packageJson = require(path.resolve('./package.json'))
+  
   packageJson.author = options.author
   packageJson.repository.url = options.git
+  packageJson.description = options.description
+  packageJson.name = options.projectName
+  fs.writeFileSync(path.resolve('./package.json'), JSON.stringify(packageJson, null, 2))
 }
 
 module.exports = parseArgs

@@ -6,6 +6,7 @@ const crypto = require('crypto')
 const md5 = crypto.createHash('md5')
 const progressBar = require('progress')
 const inquirer = require('inquirer')
+const chalk = require('chalk')
 
 let source = ''
 let dest = ''
@@ -16,7 +17,7 @@ let request = null
 const parseArgs = (args) => {
   let { url, dest, name } = args
   if (!url) {
-    console.error('\033[;33m [sd-error]: \033[;31m download file url must be given.')
+    console.error(chalk.yellow('[sd-error]:'), chalk.red('download file url must be given.'))
     return
   }
 
@@ -101,7 +102,7 @@ const download = () => {
     })
 
     res.on('end', () => {
-      console.log('  download finish! \n')
+      console.log(chalk.green('  download finish! \n'))
       file.end()
     })
   })

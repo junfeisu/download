@@ -2,6 +2,7 @@ const inquirer = require('inquirer')
 const path = require('path')
 const shell = require('shelljs')
 const fs = require('fs')
+const chalk = require('chalk')
 
 const options = {
   template: '',
@@ -41,7 +42,7 @@ const getUserOptions = async () => {
     validate: (value) => {
       const templates = ['server']
       if (templates.indexOf(value) < 0) {
-        console.warn('   \033[;33m [sj-warning]: Please enter a value in [' + templates.join(', ') + ']')
+        console.warn(chalk.yellow('   [sj-warning]: Please enter a value in [' + templates.join(', ') + ']'))
       } else {
         return true
       }
@@ -62,7 +63,7 @@ const getUserOptions = async () => {
     validate: (value) => {
       let checkGitReg = /(https:\/\/|git@).+\.git$/
       if (!checkGitReg.test(value)) {
-        console.warn('   \033[;33m [sj-warning]: Please enter a valid git repository address')
+        console.warn(chalk.yellow('   [sj-warning]: Please enter a valid git repository address'))
       } else {
         return true
       }
@@ -111,7 +112,7 @@ const setPackageJson = () => {
 
 const downloadNodeModules = () => {
   shell.exec('npm i', (code, stdout, stderr) => {
-    console.log('The project is create successfully.')
+    console.log(chalk.green('The project is create successfully.'))
   })
 }
 

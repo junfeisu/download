@@ -8,6 +8,9 @@ node_modules
 npm-debug.*
 yarn-error.*
 
+# coverage
+coverage/*
+
 # editor
 .idea
 .vscode

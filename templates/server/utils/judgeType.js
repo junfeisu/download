@@ -3,4 +3,4 @@ const judgeType = param => type => {
   return paramType.substring(8, paramType.length - 1).toLowerCase() === type
 }
 
-module.exports = judgeType
+export default judgeType

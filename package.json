@@ -29,5 +29,10 @@
     "progress": "^2.0.0",
     "request": "^2.87.0",
     "shelljs": "^0.8.2"
+  },
+  "devDependencies": {
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
+    "babel-preset-es2017": "^6.24.1",
+    "babel-register": "^6.26.0"
   }
 }

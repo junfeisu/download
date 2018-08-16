@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+require('babel-register')
 const program = require('commander')
 const searchItem = require('../utils/array').searchItem
 

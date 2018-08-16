@@ -94,8 +94,8 @@ const setOptions = () => {
 }
 
 const downloadTemplates = () => {
-  let source = path.resolve(__dirname, '../templates/' + options.template + '/*')
-  shell.cp('-r', source, './')
+  let source = path.resolve(__dirname, '../templates/' + options.template + '/')
+  shell.exec('cp -rT ' + source + ' ./')
   setPackageJson()
 }
 

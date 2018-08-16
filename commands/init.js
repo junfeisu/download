@@ -14,6 +14,12 @@ const options = {
 
 let projectName = ''
 
+process.on('exit', () => {
+  if (process.cwd() === process.env.PWD) {
+    shell.rm('-rf', projectName)
+  }
+})
+
 const parseArgs = async (args) => {
   const { project } = args
   projectName = project
@@ -21,7 +27,14 @@ const parseArgs = async (args) => {
     const existsResult = await inquirer.prompt([{
       type: 'exists',
       name: 'replaceOrigin',
-      message: 'The project ' + projectName + ' has exists.Do you want to replace it?[Y/N]'
+      message: 'The project ' + projectName + ' has exists.Do you want to replace it?[Y/N]',
+      validate: value => {
+        if (!value || (value.toUpperCase() !== 'Y' && value.toUpperCase() !== 'N')) {
+          console.warn(chalk.yellow('   [sj-warning]: Please enter Y(y) or N(n)'))
+        } else {
+          return true
+        }
+      }
     }])
 
     if (existsResult.replaceOrigin.toUpperCase() !== 'Y') {

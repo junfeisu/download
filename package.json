@@ -27,8 +27,8 @@
     "commander": "^2.17.1",
     "inquirer": "^6.1.0",
     "progress": "^2.0.0",
-    "request": "^2.87.0",
-    "shelljs": "^0.8.2"
+    "shelljs": "^0.8.2",
+    "unzip": "^0.1.11"
   },
   "devDependencies": {
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",

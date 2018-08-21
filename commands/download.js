@@ -7,6 +7,7 @@ const md5 = crypto.createHash('md5')
 const progressBar = require('progress')
 const inquirer = require('inquirer')
 const chalk = require('chalk')
+const unzip = require('unzip')
 
 let source = ''
 let dest = ''
@@ -74,9 +75,53 @@ const replaceFile = async (res) => {
   res.resume()
 }
 
+const askUnzip = async (filePath) => {
+  let questionStr = 'Download file is a zip file, Do you want to unzip it?'
+  let questionResult = await inquirer.prompt([{
+    type: 'unzip',
+    name: 'isUnzip',
+    message: questionStr,
+    validate: value => {
+      if (!value || (value.toUpperCase() !== 'Y' && value.toUpperCase() !== 'N')) {
+        console.warn(chalk.yellow('   [sj-warning]: Please enter Y(y) or N(n)'))
+      } else {
+        return true
+      }
+    }
+  }])
+
+  if (questionResult.isUnzip.toUpperCase() !== 'Y') {
+    process.exit(0)
+  }
+
+  let extractPathStr = 'Please specify the path to extract files'
+  let extractQuestionAnswer = await inquirer.prompt([{
+    type: 'extract',
+    name: 'extractPath',
+    message: extractPathStr,
+    validate: extractPath => {
+      if (!fs.existsSync(path.resolve(process.env.PWD, extractPath))) {
+        console.warn(chalk.yellow('   [sj-warning]: the path ' + path.resolve(process.env.PWD, extractPath) + ' is not exist'))
+      } else {
+        return true
+      }
+    }
+  }])
+
+  unzipFile(filePath, path.resolve(process.env.PWD, extractQuestionAnswer.extractPath))
+}
+
+const unzipFile = (filePath, extractPath) => {
+  fs.createReadStream(filePath).pipe(unzip.Extract({path: extractPath}))
+}
+
 const download = () => {
   request(source, async (res) => {
     let contentType = res.headers['content-type']
+    if (contentType.indexOf(';') >= 0) {
+      contentType = contentType.split(';')[0]
+    }
+
     let fileType = contentType.replace(/\w+\//, '')
     let bar = new progressBar('  downloading [:bar] :rate/bps :percent :etas', {
       total: parseInt(res.headers['content-length'], 10),
@@ -104,6 +149,9 @@ const download = () => {
     res.on('end', () => {
       console.log(chalk.green('  download finish! \n'))
       file.end()
+      if (fileType === 'zip') {
+        askUnzip(filePath)
+      }
     })
   })
 }

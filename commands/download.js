@@ -8,6 +8,7 @@ const progressBar = require('progress')
 const inquirer = require('inquirer')
 const chalk = require('chalk')
 const unzip = require('unzip')
+const fileTable = require('../constants/fileTable.json')
 
 let source = ''
 let dest = ''
@@ -39,7 +40,7 @@ const parseArgs = (args) => {
  */
 const handleFileName = (fileType) => {
   let matchReg = new RegExp('http(s)?:.+\.' + fileType, 'i')
-  let extractReg = /http(s)?:.+\/(?=(\w+)\.)/
+  let extractReg = new RegExp('http(s)?:.+/(?=(.+)\\.' + fileType + ')', 'i')
 
   if (matchReg.test(source)) {
     source.replace(extractReg, (match, $1, $2) => {
@@ -122,7 +123,7 @@ const download = () => {
       contentType = contentType.split(';')[0]
     }
 
-    let fileType = contentType.replace(/\w+\//, '')
+    let fileType = fileTable[contentType]
     let bar = new progressBar('  downloading [:bar] :rate/bps :percent :etas', {
       total: parseInt(res.headers['content-length'], 10),
       complete: '=',

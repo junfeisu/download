@@ -4,7 +4,7 @@
   "description": "A command cli for slj",
   "main": "index.js",
   "bin": {
-    "sj": "./bin/sj.js"
+    "slj": "./bin/sj.js"
   },
   "scripts": {
     "test": "mocha --timeout 5000 --require babel-register",

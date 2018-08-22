@@ -1,10 +1,10 @@
-[![](https://travis-ci.org/junfeisu/sj-cli.svg?branch=master)](https://travis-ci.org/junfeisu/sj-cli)
+[![](https://travis-ci.org/junfeisu/slj-cli.svg?branch=master)](https://travis-ci.org/junfeisu/slj-cli)
 
-## sj-cli
+## slj-cli
 
 > A comamnd cli program for personal.It now provides the function of download and similar to vue-cli.
 
-### sj download
+### slj download
 
 #### options
 
@@ -25,5 +25,5 @@
 
 下载的文件如果是zip压缩包,下载完会自动询问是否进行解压。如果需要解压提供解压路径之后就会自动解压，暂不支持其他类型压缩包的自动解压
 
-### sj init <project-name\>
+### slj init <project-name\>
 使用方法和vue init相似，但是目前不支持在线的模板，计划下一版本支持，自己试一下就知道用法，提示也很清晰。

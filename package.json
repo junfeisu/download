@@ -1,7 +1,7 @@
 {
-  "name": "sj-cli",
+  "name": "slj-cli",
   "version": "1.0.2",
-  "description": "A command cli for sj",
+  "description": "A command cli for slj",
   "main": "index.js",
   "bin": {
     "sj": "./bin/sj.js"

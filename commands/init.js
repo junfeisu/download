@@ -55,7 +55,9 @@ const getUserOptions = async () => {
     validate: (value) => {
       const templates = ['server']
       if (templates.indexOf(value) < 0) {
-        console.warn(chalk.yellow('   [sj-warning]: Please enter a value in [' + templates.join(', ') + ']'))
+        let noneTemplateMes = '   [sj-warning]: Please enter a value in ['
+          + templates.join(', ') + ']'
+        console.warn(chalk.yellow(noneTemplateMes))
       } else {
         return true
       }
@@ -76,7 +78,8 @@ const getUserOptions = async () => {
     validate: (value) => {
       let checkGitReg = /(https:\/\/|git@).+\.git$/
       if (!checkGitReg.test(value)) {
-        console.warn(chalk.yellow('   [sj-warning]: Please enter a valid git repository address'))
+        let invalidGitMes = '   [sj-warning]: Please enter a valid git repository address'
+        console.warn(chalk.yellow(invalidGitMes))
       } else {
         return true
       }

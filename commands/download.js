@@ -56,7 +56,8 @@ const handleFileName = (fileType) => {
 const replaceFile = async (res) => {
   res.pause()
   
-  let questionStr = 'The ' + fileName + ' alerady exists in ' + dest + '. Would you replace it [Y/N]?'
+  let questionStr = 'The ' + fileName + ' alerady exists in ' 
+    + dest + '. Would you replace it [Y/N]?'
   let questionResult = await inquirer.prompt([{
     type: 'exist',
     name: 'replaceOrigin',
@@ -101,19 +102,22 @@ const askUnzip = async (filePath) => {
     name: 'extractPath',
     message: extractPathStr,
     validate: extractPath => {
-      if (!fs.existsSync(path.resolve(process.env.PWD, extractPath))) {
-        console.warn(chalk.yellow('   [sj-warning]: the path ' + path.resolve(process.env.PWD, extractPath) + ' is not exist'))
+      let resolvedPath = path.resolve(process.env.PWD, extractPath)
+      if (!fs.existsSync(resolvedPath)) {
+        let existedMes = '   [sj-warning]: the path ' + resolvedPath + ' is not exist'
+        console.warn(chalk.yellow(existedMes))
       } else {
         return true
       }
     }
   }])
 
-  unzipFile(filePath, path.resolve(process.env.PWD, extractQuestionAnswer.extractPath))
+  unzipFile(filePath, extractQuestionAnswer.extractPath)
 }
 
 const unzipFile = (filePath, extractPath) => {
-  fs.createReadStream(filePath).pipe(unzip.Extract({path: extractPath}))
+  let resolvedPath = path.resolve(process.env.PWD, extractPath)
+  fs.createReadStream(filePath).pipe(unzip.Extract({path: resolvedPath}))
 }
 
 const download = () => {

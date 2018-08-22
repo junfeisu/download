@@ -1,7 +1,7 @@
 {
-  "name": "download",
+  "name": "sj-cli",
   "version": "1.0.0",
-  "description": "A downloader",
+  "description": "A command cli for sj",
   "main": "index.js",
   "bin": {
     "sj": "./bin/sj.js"

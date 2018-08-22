@@ -11,7 +11,7 @@ const unzip = require('unzip')
 const fileTable = require('../constants/fileTable.json')
 
 let source = ''
-let dest = ''
+let destPath = ''
 let fileName = ''
 let request = null
 
@@ -19,13 +19,13 @@ let request = null
 const parseArgs = (args) => {
   let { url, dest, name } = args
   if (!url) {
-    console.error(chalk.yellow('[sd-error]:'), chalk.red('download file url must be given.'))
+    console.error(chalk.yellow('[sj-error]:'), chalk.red('download file url must be given.'))
     return
   }
 
   source = url
   request = /^https/.test(source) ? https.get : http.get
-  dest = path.resolve(process.env.PWD, dest)
+  destPath = path.resolve(process.env.PWD, dest)
   if (name) {
     fileName = name
   }
@@ -57,7 +57,7 @@ const replaceFile = async (res) => {
   res.pause()
   
   let questionStr = 'The ' + fileName + ' alerady exists in ' 
-    + dest + '. Would you replace it [Y/N]?'
+    + destPath + '. Would you replace it [Y/N]?'
   let questionResult = await inquirer.prompt([{
     type: 'exist',
     name: 'replaceOrigin',
@@ -139,7 +139,7 @@ const download = () => {
       handleFileName(fileType)
     }
 
-    let filePath = path.join(dest, fileName + '.' + fileType)
+    let filePath = path.resolve(destPath, fileName + '.' + fileType)
     if (fs.existsSync(filePath)) {
       replaceFile(res)
     }

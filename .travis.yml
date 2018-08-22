@@ -1,0 +1,19 @@
+sudo: false
+language: node_js
+node_js: stable
+
+git:
+  depth: 2
+
+branches:
+  only:
+    - master
+
+before_install:
+  - npm install
+
+before_script:
+  - npm link
+
+script:
+  - npm run test

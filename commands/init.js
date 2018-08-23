@@ -3,6 +3,8 @@ const path = require('path')
 const shell = require('shelljs')
 const fs = require('fs')
 const chalk = require('chalk')
+const githubDownloadHost = 'https://codeload.github.com/'
+const gitlabDownloadHost = 'https://gitlab.com/'
 
 const options = {
   template: '',
@@ -53,14 +55,14 @@ const getUserOptions = async () => {
     name: 'template',
     messsage: 'What\'s the template you want to use？',
     validate: (value) => {
-      const templates = ['server']
-      if (templates.indexOf(value) < 0) {
-        let noneTemplateMes = '   [sj-warning]: Please enter a value in ['
-          + templates.join(', ') + ']'
-        console.warn(chalk.yellow(noneTemplateMes))
-      } else {
+      // const templates = ['server']
+      // if (templates.indexOf(value) < 0) {
+      //   let noneTemplateMes = '   [sj-warning]: Please enter a value in ['
+      //     + templates.join(', ') + ']'
+      //   console.warn(chalk.yellow(noneTemplateMes))
+      // } else {
         return true
-      }
+      // }
     }
   }, {
     type: 'input',
@@ -109,10 +111,37 @@ const setOptions = () => {
   downloadTemplates()
 }
 
+const handleTemplateUrl = (templateUrl) => {
+  let isGithub = !!(templateUrl.indexOf('github') >= 0)
+  let resolvedUrl = isGithub ? githubDownloadHost : gitlabDownloadHost
+  let extractReg = /^(https|git).+(?=\.com[\/|:](.+)\/(.+)\.git$)/
+  let userName = ''
+  let repoName = ''
+
+  templateUrl.replace(extractReg, (match, $1, $user, $repo) => {
+    userName = $user
+    repoName = $repo
+  })
+
+  if (isGithub) {
+    resolvedUrl += githubDownloadHost + userName + '/' + repoName + '/zip/master'
+  } else {
+    resolvedUrl += gitlabDownloadHost + userName + '/' + repoName + '/-/archive/master/' + repoName + '-mater.zip'
+  }
+
+  return resolvedUrl
+}
+
 const downloadTemplates = () => {
-  let source = path.resolve(__dirname, '../templates/' + options.template + '/')
-  shell.exec('cp -rT ' + source + ' ./')
-  setPackageJson()
+  let gitAdderssReg = /^(https:\/\/|git@).+\.git$/
+  if (gitAdderssReg.test(options.template)) {
+    let templateUrl = handleTemplateUrl(options.template)
+    shell.exec(`slj download -u ${templateUrl}`, {async: true})
+  } else {
+    let source = path.resolve(__dirname, '../templates/' + options.template + '/')
+    shell.exec('cp -rT ' + source + ' ./')
+  }
+  // setPackageJson()
 }
 
 const setPackageJson = () => {

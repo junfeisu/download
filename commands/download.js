@@ -39,7 +39,7 @@ const parseArgs = (args) => {
  2. 如果地址没有带后缀名，那么我们就会生成一个md5然后截取前7位，然后在前面加上sj-
  */
 const handleFileName = (fileType) => {
-  let matchReg = new RegExp('http(s)?:.+\.' + fileType, 'i')
+  let matchReg = new RegExp('http(s)?:.+\\.' + fileType, 'i')
   let extractReg = new RegExp('http(s)?:.+/(?=(.+)\\.' + fileType + ')', 'i')
 
   if (matchReg.test(source)) {
@@ -140,6 +140,7 @@ const download = () => {
     }
 
     let filePath = path.resolve(destPath, fileName + '.' + fileType)
+    console.log('filePath', filePath)
     if (fs.existsSync(filePath)) {
       replaceFile(res)
     }
@@ -154,9 +155,9 @@ const download = () => {
     res.on('end', () => {
       console.log(chalk.green('  download finish! \n'))
       file.end()
-      if (fileType === 'zip') {
-        askUnzip(filePath)
-      }
+      // if (fileType === 'zip') {
+      //   askUnzip(filePath)
+      // }
     })
   })
 }

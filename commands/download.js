@@ -13,11 +13,12 @@ const fileTable = require('../constants/fileTable.json')
 let source = ''
 let destPath = ''
 let fileName = ''
+let extractPath = ''
 let request = null
 
 // 对命令行参数的处理
 const parseArgs = (args) => {
-  let { url, dest, name } = args
+  let { url, dest, name, extract } = args
   if (!url) {
     console.error(chalk.yellow('[sj-error]:'), chalk.red('download file url must be given.'))
     return
@@ -26,6 +27,9 @@ const parseArgs = (args) => {
   source = url
   request = /^https/.test(source) ? https.get : http.get
   destPath = path.resolve(process.env.PWD, dest)
+  if (extract) {
+    extractPath = path.resolve(process.env.PWD, extract)
+  }
   if (name) {
     fileName = name
   }
@@ -77,47 +81,46 @@ const replaceFile = async (res) => {
   res.resume()
 }
 
-const askUnzip = async (filePath) => {
-  let questionStr = 'Download file is a zip file, Do you want to unzip it?'
-  let questionResult = await inquirer.prompt([{
-    type: 'unzip',
-    name: 'isUnzip',
-    message: questionStr,
-    validate: value => {
-      if (!value || (value.toUpperCase() !== 'Y' && value.toUpperCase() !== 'N')) {
-        console.warn(chalk.yellow('   [sj-warning]: Please enter Y(y) or N(n)'))
-      } else {
-        return true
-      }
-    }
-  }])
+// const askUnzip = async (filePath) => {
+//   let questionStr = 'Download file is a zip file, Do you want to unzip it?'
+//   let questionResult = await inquirer.prompt([{
+//     type: 'unzip',
+//     name: 'isUnzip',
+//     message: questionStr,
+//     validate: value => {
+//       if (!value || (value.toUpperCase() !== 'Y' && value.toUpperCase() !== 'N')) {
+//         console.warn(chalk.yellow('   [sj-warning]: Please enter Y(y) or N(n)'))
+//       } else {
+//         return true
+//       }
+//     }
+//   }])
 
-  if (questionResult.isUnzip.toUpperCase() !== 'Y') {
-    process.exit(0)
-  }
+//   if (questionResult.isUnzip.toUpperCase() !== 'Y') {
+//     process.exit(0)
+//   }
 
-  let extractPathStr = 'Please specify the path to extract files'
-  let extractQuestionAnswer = await inquirer.prompt([{
-    type: 'extract',
-    name: 'extractPath',
-    message: extractPathStr,
-    validate: extractPath => {
-      let resolvedPath = path.resolve(process.env.PWD, extractPath)
-      if (!fs.existsSync(resolvedPath)) {
-        let existedMes = '   [sj-warning]: the path ' + resolvedPath + ' is not exist'
-        console.warn(chalk.yellow(existedMes))
-      } else {
-        return true
-      }
-    }
-  }])
+//   let extractPathStr = 'Please specify the path to extract files'
+//   let extractQuestionAnswer = await inquirer.prompt([{
+//     type: 'extract',
+//     name: 'extractPath',
+//     message: extractPathStr,
+//     validate: extractPath => {
+//       let resolvedPath = path.resolve(process.env.PWD, extractPath)
+//       if (!fs.existsSync(resolvedPath)) {
+//         let existedMes = '   [sj-warning]: the path ' + resolvedPath + ' is not exist'
+//         console.warn(chalk.yellow(existedMes))
+//       } else {
+//         return true
+//       }
+//     }
+//   }])
 
-  unzipFile(filePath, extractQuestionAnswer.extractPath)
-}
+//   unzipFile(filePath, extractQuestionAnswer.extractPath)
+// }
 
-const unzipFile = (filePath, extractPath) => {
-  let resolvedPath = path.resolve(process.env.PWD, extractPath)
-  fs.createReadStream(filePath).pipe(unzip.Extract({path: resolvedPath}))
+const unzipFile = (filePath) => {
+  fs.createReadStream(filePath).pipe(unzip.Extract({path: extractPath}))
 }
 
 const download = () => {
@@ -140,7 +143,6 @@ const download = () => {
     }
 
     let filePath = path.resolve(destPath, fileName + '.' + fileType)
-    console.log('filePath', filePath)
     if (fs.existsSync(filePath)) {
       replaceFile(res)
     }
@@ -155,9 +157,9 @@ const download = () => {
     res.on('end', () => {
       console.log(chalk.green('  download finish! \n'))
       file.end()
-      // if (fileType === 'zip') {
-      //   askUnzip(filePath)
-      // }
+      if (fileType === 'zip' && extractPath) {
+        unzipFile(filePath)
+      }
     })
   })
 }

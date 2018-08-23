@@ -12,13 +12,15 @@ program
   .option('-u, --url <string>', '设置需要下载的文件的地址')
   .option('-d, --dest <string>', '设置下载文件存放的地址')
   .option('-n, --file-name <string>', '设置下载文件的文件名')
+  .option('-e, --extract-path <string>', '设置zip文件解压路径')
   .action(() => {
     let downloadCom = searchItem(program.commands, {_name: 'download'})
     const parseArg = require('../commands/download')
     parseArg({
       url: downloadCom.url,
       dest: downloadCom.dest ? downloadCom.dest : '',
-      name: downloadCom.fileName
+      name: downloadCom.fileName,
+      extract: downloadCom.extractPath
     })
   })
 

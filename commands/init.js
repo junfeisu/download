@@ -55,14 +55,15 @@ const getUserOptions = async () => {
     name: 'template',
     messsage: 'What\'s the template you want to use？',
     validate: (value) => {
-      // const templates = ['server']
-      // if (templates.indexOf(value) < 0) {
-      //   let noneTemplateMes = '   [sj-warning]: Please enter a value in ['
-      //     + templates.join(', ') + ']'
-      //   console.warn(chalk.yellow(noneTemplateMes))
-      // } else {
+      const templates = ['server']
+      let checkGitReg = /(https:\/\/|git@).+\.git$/
+      if (templates.indexOf(value) < 0 && !checkGitReg.test(value)) {
+        let noneTemplateMes = '   [sj-warning]: Please enter a value in ['
+          + templates.join(', ') + '] or a git repo address'
+        console.warn(chalk.yellow(noneTemplateMes))
+      } else {
         return true
-      // }
+      }
     }
   }, {
     type: 'input',
@@ -124,31 +125,39 @@ const handleTemplateUrl = (templateUrl) => {
   })
 
   if (isGithub) {
-    resolvedUrl += githubDownloadHost + userName + '/' + repoName + '/zip/master'
+    resolvedUrl += userName + '/' + repoName + '/zip/master'
   } else {
-    resolvedUrl += gitlabDownloadHost + userName + '/' + repoName + '/-/archive/master/' + repoName + '-mater.zip'
+    resolvedUrl += userName + '/' + repoName + '/-/archive/master/' + repoName + '-mater.zip'
   }
 
   return resolvedUrl
 }
 
-const downloadTemplates = () => {
+const downloadTemplates = async () => {
   let gitAdderssReg = /^(https:\/\/|git@).+\.git$/
   if (gitAdderssReg.test(options.template)) {
     let templateUrl = handleTemplateUrl(options.template)
-    shell.exec(`slj download -u ${templateUrl}`, {async: true})
+    await shell.exec(`slj download -u ${templateUrl} -e ./`)
+    shell.rm('-f', '*.zip')
+    let directoryName = shell.ls('./')[0]
+    shell.exec(`cp -rT ${directoryName} ./`)
+    shell.rm('-rf', directoryName)
+    setPackageJson()
   } else {
     let source = path.resolve(__dirname, '../templates/' + options.template + '/')
     shell.exec('cp -rT ' + source + ' ./')
+    setPackageJson()
   }
-  // setPackageJson()
 }
 
 const setPackageJson = () => {
   let packageJson = require(path.resolve('./package.json'))
   
   packageJson.author = options.author
-  packageJson.repository.url = options.git
+  packageJson.repository = {
+    type: 'git',
+    url: options.git
+  }
   packageJson.description = options.description
   packageJson.name = options.projectName
   fs.writeFileSync(path.resolve('./package.json'), JSON.stringify(packageJson, null, 2))

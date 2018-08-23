@@ -33,6 +33,25 @@ program
     })
   })
 
+program
+  .command('scan <dir>')
+  .description('scan the whole static resource files under dir')
+  .option('-r, --relative <string>', '设置需要扫描的项目根目录的相对目录')
+  .option('-i, --ignore <string>', '设置需要忽略的目录，默认为相对项目根目录')
+  .option('-n, --json-name <string>', '设置生成的json文件名，默认为staticResource.json')
+  .option('-d, --dest <string>', '设置生成的json文件的存放位置')
+  .action((dir) => {
+    let scanItem = searchItem(program.commands, {_name: 'scan'})
+    const parseArg = require('../commands/scan')
+    parseArg({
+      root: dir,
+      relative: scanItem.relative,
+      ignore: scanItem.ignore,
+      name: scanItem.jsonName,
+      dest: scanItem.dest ? scanItem.dest : ''
+    })
+  })
+
 program.parse(process.argv)
 
 if (!program.args.length) {

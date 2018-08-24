@@ -43,11 +43,13 @@
 
 dir 就是指定需要扫描的项目的根目录.
 
+**目前暂不支持指定静态文件的类型(默认是css\|less\|scss\|png\|jp(e)g\|gif\|svg\|ttf).**
+
 第一个option -r 这个参数是相对dir指定的，只扫描这个指定的目录下面的静态文件.
 
 第二个option -i 这个参数如果-r指定了，那么ignore的参数就是相对relatice的，如果没有指定就相对于dir.
 
-补充：因为commander.js单个option不支持常见命令行多值，所以这边采用 ~ 进行分隔，想指定多个ignore directorires，就像如下指定：
+补充：因为commander.js单个option不支持常见命令行多值，所以这边采用 ~ 进行分隔，想指定多个ignore directories，就像如下指定：
 
     -i node_moduels~.git~build // ignore node_modules .git build directory
 

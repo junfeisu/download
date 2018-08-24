@@ -2,11 +2,14 @@
 
 ## slj-cli
 
-> A comamnd cli program for personal.It now provides the function of download and similar to vue-cli.
+> A comamnd cli program for personal.It provides a series of personalized function like download and similar to vue-cli etc.
 
-### slj download
+### Install
 
-#### options
+    npm install -g slj-cli
+
+### Usage
+#### slj download(下载文件)
 
     -u --url specify the download path.
     -n --file-name specify the download file name.
@@ -31,9 +34,7 @@
 
 下载的文件如果是zip压缩包,下载完会自动询问是否进行解压。如果需要解压提供解压路径之后就会自动解压，暂不支持其他类型压缩包的自动解压
 
-### slj scan <dir\>
-
-#### options
+#### slj scan <dir\>(扫描指定目录下的静态文件，生成一个json文件)
 
     -r --relative specify the scan relative path.
     -i --ignore specify the scan ignore directories.
@@ -50,5 +51,5 @@ dir 就是指定需要扫描的项目的根目录.
 
     -i node_moduels~.git~build // ignore node_modules .git build directory
 
-### slj init <project-name\>
+### slj init <project-name\>(初始化一个项目)
 使用方法和vue init相似，支持在线和本地的模板，目前本地的模板只有server这一个模板，后续会丰富。在线模板的话把模板的仓库地址填进去即可（**目前仅支持github和gitlab的仓库**）

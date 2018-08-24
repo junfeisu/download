@@ -9,13 +9,13 @@ let rootPwd = ''
 let relativePwd = ''
 let specifiedDest = ''
 let specifiedName = 'staticResource'
-let lastDirectory = null
+let lastDirectory = ''
 
 const parseArgs = (args) => {
   const { root, name, relative, ignore, dest } = args
   
   if (!root) {
-    console.error(chalk.yellow('[sj-error]:'), chalk.red('scan directory must be given.'))
+    console.error(chalk.yellow('[slj-error]:'), chalk.red('scan directory must be given.'))
     return
   }
 
@@ -26,7 +26,7 @@ const parseArgs = (args) => {
   if (ignore) {
     let ignores = ignore.split('~')
     ignores.forEach(value => {
-      ignorePwds.push(value)
+      ignorePwds.push(path.resolve(relativePwd, value))
     })
   }
   if (name) {
@@ -41,11 +41,11 @@ const removeIgnorePwds = (pwd, files) => {
   for (let i = files.length - 1; i >= 0; i--) {
     let isDirectory = fs.statSync(path.resolve(pwd, files[i])).isDirectory()
     if (isDirectory) {
-      if (ignorePwds.includes(files[i])) {
+      if (ignorePwds.includes(path.resolve(pwd, files[i]))) {
         files.splice(i, 1)
       } else {
-        if (pwd === relativePwd && !hasFound) {
-          lastDirectory = files[i]
+        if (!pwd.indexOf(lastDirectory) && !hasFound) {
+          lastDirectory = path.resolve(pwd, files[i])
           hasFound = true
         }
       }
@@ -58,6 +58,11 @@ const next = (pwd) => {
   let files = fs.readdirSync(pwd)
   let staticFileReg = /^.+(\.css|\.png|\.jpg|\.jpeg|\.svg|\.ttf|\.scss|\.less)$/i
   
+  if (!files.length) {
+    console.warn(chalk.yellow('[slj-warning]: The directory you supported is a null directory'))
+    return
+  }
+
   removeIgnorePwds(pwd, files)
 
   files.forEach((file, index) => {
@@ -66,13 +71,14 @@ const next = (pwd) => {
       next(path.resolve(pwd, file))
     } else {
       if (staticFileReg.test(file)) {
-        if (path.resolve(pwd) === path.resolve(rootPwd)) {
+        if (pwd === rootPwd) {
           staticResourceTable[file] = file
         } else {
-          staticResourceTable[path.join(pwd.replace(rootPwd, ''), file)] = path.join(pwd.replace(rootPwd, ''), file)
+          let relativedPath = path.resolve(pwd, file).replace(rootPwd, '.')
+          staticResourceTable[relativedPath] = relativedPath
         }
       }
-      if (pwd === path.resolve(relativePwd, lastDirectory) && index === files.length - 1) {
+      if ((pwd === lastDirectory || !lastDirectory) && index === files.length - 1) {
         generateJosnFile()
       }
     }
@@ -81,13 +87,13 @@ const next = (pwd) => {
 
 const generateJosnFile = () => {
   let fileName = specifiedName + '.json'
-  fs.open(path.resolve(rootPwd, fileName), 'w+', null, (e, fd) => {
+  fs.open(path.resolve(specifiedDest, fileName), 'w+', null, (e, fd) => {
     if (e) {
       console.log('create json file err', e)
       return
     }
     fs.write(fd, JSON.stringify(staticResourceTable, null, 2), (error) => {
-      error ? console.log('write err', error) : console.log('add json success')
+      error ? console.log('write err', error) : console.log(chalk.green(`add ${fileName} success in ${specifiedDest}`))
       fs.closeSync(fd)
     })
   })

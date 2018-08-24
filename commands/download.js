@@ -20,7 +20,7 @@ let request = null
 const parseArgs = (args) => {
   let { url, dest, name, extract } = args
   if (!url) {
-    console.error(chalk.yellow('[sj-error]:'), chalk.red('download file url must be given.'))
+    console.error(chalk.yellow('[slj-error]:'), chalk.red('download file url must be given.'))
     return
   }
 
@@ -40,7 +40,7 @@ const parseArgs = (args) => {
 /*
  当没有提供文件的名称时我们会自动添加文件名
  1. 如果地址自带文件后缀名，我们从地址里取文件名
- 2. 如果地址没有带后缀名，那么我们就会生成一个md5然后截取前7位，然后在前面加上sj-
+ 2. 如果地址没有带后缀名，那么我们就会生成一个md5然后截取前7位，然后在前面加上slj-
  */
 const handleFileName = (fileType) => {
   let matchReg = new RegExp('http(s)?:.+\\.' + fileType, 'i')
@@ -52,7 +52,7 @@ const handleFileName = (fileType) => {
     })
   } else {
     md5.update(source)
-    fileName = 'sj-' + md5.digest('hex').slice(0, 7)
+    fileName = 'slj-' + md5.digest('hex').slice(0, 7)
   }
 }
 

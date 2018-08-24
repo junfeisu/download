@@ -32,7 +32,7 @@ const parseArgs = async (args) => {
       message: 'The project ' + projectName + ' has exists.Do you want to replace it?[Y/N]',
       validate: value => {
         if (!value || (value.toUpperCase() !== 'Y' && value.toUpperCase() !== 'N')) {
-          console.warn(chalk.yellow('   [sj-warning]: Please enter Y(y) or N(n)'))
+          console.warn(chalk.yellow('   [slj-warning]: Please enter Y(y) or N(n)'))
         } else {
           return true
         }
@@ -58,7 +58,7 @@ const getUserOptions = async () => {
       const templates = ['server']
       let checkGitReg = /(https:\/\/|git@).+\.git$/
       if (templates.indexOf(value) < 0 && !checkGitReg.test(value)) {
-        let noneTemplateMes = '   [sj-warning]: Please enter a value in ['
+        let noneTemplateMes = '   [slj-warning]: Please enter a value in ['
           + templates.join(', ') + '] or a git repo address'
         console.warn(chalk.yellow(noneTemplateMes))
       } else {
@@ -81,7 +81,7 @@ const getUserOptions = async () => {
     validate: (value) => {
       let checkGitReg = /(https:\/\/|git@).+\.git$/
       if (!checkGitReg.test(value)) {
-        let invalidGitMes = '   [sj-warning]: Please enter a valid git repository address'
+        let invalidGitMes = '   [slj-warning]: Please enter a valid git repository address'
         console.warn(chalk.yellow(invalidGitMes))
       } else {
         return true

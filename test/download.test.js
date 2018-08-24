@@ -25,7 +25,7 @@ describe('download command test', () => {
 
   it('should throw an error when download url not given', () => {
     const downloadResult = shell.exec('slj download')
-    expect(downloadResult).to.have.property('stderr').equal('[sj-error]: download file url must be given.\n')
+    expect(downloadResult).to.have.property('stderr').equal('[slj-error]: download file url must be given.\n')
   })
 
   it("should return the file name itself", async () => {
@@ -45,7 +45,7 @@ describe('download command test', () => {
   })
 
   it('the download file should be the random name', async () => {
-    let randomName = 'sj-' + md5.update(noSuffixImg).digest('hex').slice(0, 7)
+    let randomName = 'slj-' + md5.update(noSuffixImg).digest('hex').slice(0, 7)
     const downloadResut = await shell.exec(`slj download -u ${noSuffixImg} -d ./downloadTest`)
     expect(exist(`./downloadTest/${randomName}.png`)).to.be.true
   })

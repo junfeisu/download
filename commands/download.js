@@ -16,6 +16,11 @@ let fileName = ''
 let extractPath = ''
 let request = null
 
+// windows process.env.PWD is undefined
+if (!process.env.PWD) {
+  process.env.PWD = process.cwd()
+}
+
 // 对命令行参数的处理
 const parseArgs = (args) => {
   let { url, dest, name, extract } = args

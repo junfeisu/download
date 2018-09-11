@@ -16,6 +16,11 @@ const options = {
 
 let projectName = ''
 
+// windows process.env.PWD is undefined
+if (!process.env.PWD) {
+  process.env.PWD = process.cwd()
+}
+
 process.on('exit', () => {
   if (process.cwd() === process.env.PWD) {
     shell.rm('-rf', projectName)

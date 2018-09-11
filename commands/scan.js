@@ -11,6 +11,11 @@ let specifiedDest = ''
 let specifiedName = 'staticResource'
 let lastDirectory = ''
 
+// windows process.env.PWD is undefined
+if (!process.env.PWD) {
+  process.env.PWD = process.cwd()
+}
+
 const parseArgs = (args) => {
   const { root, name, relative, ignore, dest } = args
   
@@ -58,7 +63,7 @@ const next = (pwd) => {
   let files = fs.readdirSync(pwd)
   let staticFileReg = /^.+(\.css|\.png|\.jpg|\.jpeg|\.svg|\.ttf|\.scss|\.less)$/i
   
-  if (!files.length) {
+  if (!files.length && pwd === relativePwd) {
     console.warn(chalk.yellow('[slj-warning]: The directory you supported is a null directory'))
     return
   }

@@ -52,6 +52,28 @@ program
     })
   })
 
+program
+  .command('component <name>')
+  .description('manage the vue component')
+  .option('-p --path <string>', '设置component文件的生成位置')
+  .option('-r --router <string>', '设置component的路由路径')
+  .option('-d --deprecate', '删除该component')
+  .option('-c --css-compiler <string>', '指定css预编译器，默认为无')
+  .option('-p --css-public', '当前component css是否公开')
+  .action(name => {
+    let scanItem = searchItem(program.commands, {_name: 'component'})
+    const parseArg = require('../commands/component')
+
+    parseArg({
+      name: name,
+      filePath: scanItem.path,
+      router: scanItem.router,
+      deprecate: scanItem.deprecate ? true : false,
+      compiler: scanItem.cssCompiler,
+      cssPublic: scanItem.cssPublic ? true : false
+    })
+  })
+
 program.parse(process.argv)
 
 if (!program.args.length) {

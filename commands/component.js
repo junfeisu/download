@@ -22,7 +22,7 @@ const parseArg = (args) => {
   }
 
   if (!filePath) {
-    console.errot(chalk.yellow('[slj-error]:'), chalk.red('component file path must be given.'))
+    console.error(chalk.yellow('[slj-error]:'), chalk.red('component file path must be given.'))
     return
   }
   

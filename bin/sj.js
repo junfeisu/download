@@ -9,6 +9,7 @@ program
 
 program
   .command('download')
+  .description('download the file with given url')
   .option('-u, --url <string>', '设置需要下载的文件的地址')
   .option('-d, --dest <string>', '设置下载文件存放的地址')
   .option('-n, --file-name <string>', '设置下载文件的文件名')
@@ -26,6 +27,7 @@ program
 
 program
   .command('init <projectName>')
+  .description('init project similar to the vue-cli init')
   .action((projectName) => {
     const parseArg = require('../commands/init')
     parseArg({
